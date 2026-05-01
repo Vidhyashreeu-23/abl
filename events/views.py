@@ -34,11 +34,14 @@ def event_list(request):
 def event_detail(request, pk):
     event = get_object_or_404(Event, pk=pk)
     is_registered = False
+    can_manage_event = False
     if request.user.is_authenticated:
         is_registered = EventRegistration.objects.filter(event=event, user=request.user).exists()
+        can_manage_event = _user_can_manage_event(request.user, event)
     return render(request, 'events/event_detail.html', {
         'event': event,
         'is_registered': is_registered,
+        'can_manage_event': can_manage_event,
     })
 
 

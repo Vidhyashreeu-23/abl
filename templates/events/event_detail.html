@@ -34,7 +34,7 @@
             <h5>Event Info</h5>
             <p><strong>Club:</strong> <a href="{% url 'club_detail' event.club.slug %}">{{ event.club.name }}</a></p>
             <p><strong>Created by:</strong> {{ event.created_by.username }}</p>
-            {% if user.is_authenticated and event.created_by == user or user.is_superuser or event.club.memberships.filter(user=user, role__in=['admin','president']).exists %}
+            {% if can_manage_event %}
                 <div class="d-grid gap-2">
                     <a class="btn btn-outline-secondary" href="{% url 'edit_event' event.pk %}">Edit Event</a>
                     <form method="post" action="{% url 'delete_event' event.pk %}">{% csrf_token %}
