@@ -5,6 +5,7 @@ services:
     region: oregon
     branch: main
     plan: free
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    deployCommand: python manage.py migrate
     startCommand: gunicorn campusconnect.wsgi --log-file -
     autoDeploy: true
