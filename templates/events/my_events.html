@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>My Registered Events</h1>
+<div class="row row-cols-1 row-cols-md-2 g-4 mt-3">
+    {% for registration in registrations %}
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5><a href="{% url 'event_detail' registration.event.pk %}">{{ registration.event.title }}</a></h5>
+                    <p class="mb-1">{{ registration.event.club.name }}</p>
+                    <p class="small text-muted">{{ registration.event.start_datetime|date:'M d, Y H:i' }}</p>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p>You have no event registrations yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>My Clubs</h1>
+<div class="row row-cols-1 row-cols-md-2 g-4 mt-3">
+    {% for membership in memberships %}
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5><a href="{% url 'club_detail' membership.club.slug %}">{{ membership.club.name }}</a></h5>
+                    <p>{{ membership.club.description|truncatechars:120 }}</p>
+                    <p class="small text-muted">Role: {{ membership.get_role_display }}</p>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p>You have not joined any clubs yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}

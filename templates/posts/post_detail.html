@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load clubs_tags %}
+{% block content %}
+{% with False as member_status %}
+    {% with False as club_admin %}
+        {% if user.is_authenticated %}
+            {% is_member user post.club as member_status %}
+            {% is_club_admin user post.club as club_admin %}
+        {% endif %}
+        <div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            {% if post.image %}
+                <img src="{{ post.image.url }}" class="card-img-top" alt="Post image">
+            {% endif %}
+            <div class="card-body">
+                <h2>{{ post.title }}</h2>
+                <p class="text-muted">By <a href="{% url 'profile' post.author.username %}">{{ post.author.username }}</a> in <a href="{% url 'club_detail' post.club.slug %}">{{ post.club.name }}</a></p>
+                <p>{{ post.content }}</p>
+                {% if post.author == user or club_admin %}
+                    <div class="d-flex gap-2">
+                        <a class="btn btn-outline-secondary btn-sm" href="{% url 'edit_post' post.pk %}">Edit</a>
+                        <form method="post" action="{% url 'delete_post' post.pk %}">{% csrf_token %}
+                            <button class="btn btn-outline-danger btn-sm" type="submit">Delete</button>
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card p-4">
+            <h4>Comments</h4>
+            {% if user.is_authenticated and member_status %}
+                <form method="post" action="{% url 'add_comment' post.pk %}">{% csrf_token %}
+                    {{ comment_form.as_p }}
+                    <button class="btn btn-primary" type="submit">Comment</button>
+                </form>
+            {% elif user.is_authenticated %}
+                <p class="text-muted">Join the club to leave a comment.</p>
+            {% else %}
+                <p class="text-muted">Please <a href="{% url 'login' %}">login</a> to comment.</p>
+            {% endif %}
+            <hr>
+            {% for comment in comments %}
+                <div class="mb-3">
+                    <strong>{{ comment.author.username }}</strong> <span class="text-muted">{{ comment.created_at|date:'M d, Y H:i' }}</span>
+                    <p>{{ comment.content }}</p>
+                </div>
+            {% empty %}
+                <p>No comments yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+    {% endwith %}
+{% endwith %}
+{% endblock %}

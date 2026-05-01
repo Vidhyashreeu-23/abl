@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load clubs_tags %}
+{% block content %}
+{% with False as member_status %}
+    {% with False as club_admin %}
+        {% if user.is_authenticated %}
+            {% is_member user club as member_status %}
+            {% is_club_admin user club as club_admin %}
+        {% endif %}
+        <div class="card mb-4 overflow-hidden">
+    {% if club.cover_image %}
+        <img src="{{ club.cover_image.url }}" class="card-img-top" alt="{{ club.name }} cover">
+    {% endif %}
+    <div class="card-body">
+        <div class="d-flex align-items-center mb-3">
+            {% if club.logo.url %}
+                <img src="{{ club.logo.url }}" alt="{{ club.name }}" class="rounded-circle me-3" style="width:80px; height:80px; object-fit:cover;">
+            {% endif %}
+            <div>
+                <h2>{{ club.name }}</h2>
+                <p class="mb-0"><span class="badge bg-secondary">{{ club.category.name }}</span></p>
+            </div>
+        </div>
+        <p>{{ club.description }}</p>
+        <div class="mb-3">
+            {% if club.social_links.website %}<a href="{{ club.social_links.website }}" class="me-2">Website</a>{% endif %}
+            {% if club.social_links.instagram %}<a href="{{ club.social_links.instagram }}" class="me-2">Instagram</a>{% endif %}
+            {% if club.social_links.twitter %}<a href="{{ club.social_links.twitter }}" class="me-2">Twitter</a>{% endif %}
+        </div>
+        <div class="d-flex gap-2">
+            {% if user.is_authenticated %}
+                {% if member_status %}
+                    <form method="post" action="{% url 'leave_club' club.slug %}">{% csrf_token %}<button class="btn btn-outline-danger">Leave Club</button></form>
+                {% else %}
+                    <form method="post" action="{% url 'join_club' club.slug %}">{% csrf_token %}<button class="btn btn-primary">Join Club</button></form>
+                {% endif %}
+            {% endif %}
+            {% if club_admin %}
+                <a class="btn btn-outline-secondary" href="{% url 'edit_club' club.slug %}">Edit Club</a>
+                <a class="btn btn-outline-primary" href="{% url 'create_event' club.slug %}">Create Event</a>
+                <a class="btn btn-outline-primary" href="{% url 'create_post' club.slug %}">Create Post</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<ul class="nav nav-tabs mb-3" role="tablist">
+    <li class="nav-item"><a class="nav-link active" href="#about" data-bs-toggle="tab">About</a></li>
+    <li class="nav-item"><a class="nav-link" href="#events" data-bs-toggle="tab">Events</a></li>
+    <li class="nav-item"><a class="nav-link" href="#posts" data-bs-toggle="tab">Posts</a></li>
+    <li class="nav-item"><a class="nav-link" href="#members" data-bs-toggle="tab">Members</a></li>
+    <li class="nav-item"><a class="nav-link" href="#reviews" data-bs-toggle="tab">Reviews</a></li>
+</ul>
+<div class="tab-content">
+    <div class="tab-pane fade show active" id="about">
+        <div class="row">
+            <div class="col-md-8">
+                <h4>About</h4>
+                <p>{{ club.description }}</p>
+            </div>
+            <div class="col-md-4">
+                <ul class="list-group">
+                    <li class="list-group-item"><strong>Members:</strong> {{ club.member_count }}</li>
+                    <li class="list-group-item"><strong>Rating:</strong> {{ club.average_rating }} / 5</li>
+                    <li class="list-group-item"><strong>Reviews:</strong> {{ club.review_count }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="events">
+        <h4>Upcoming Events</h4>
+        {% for event in events %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5><a href="{% url 'event_detail' event.pk %}">{{ event.title }}</a></h5>
+                    <p>{{ event.start_datetime|date:'M d, Y H:i' }} at {{ event.location }}</p>
+                </div>
+            </div>
+        {% empty %}
+            <p>No upcoming events yet.</p>
+        {% endfor %}
+    </div>
+    <div class="tab-pane fade" id="posts">
+        <h4>Posts</h4>
+        {% for post in posts %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5><a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></h5>
+                    <p class="text-muted">{{ post.created_at|date:'M d, Y' }}</p>
+                </div>
+            </div>
+        {% empty %}
+            <p>No posts yet.</p>
+        {% endfor %}
+    </div>
+    <div class="tab-pane fade" id="members">
+        <h4>Members</h4>
+        <table class="table table-striped">
+            <thead><tr><th>Name</th><th>Role</th><th>Joined</th></tr></thead>
+            <tbody>
+                {% for member in members %}
+                    <tr>
+                        <td><a href="{% url 'profile' member.user.username %}">{{ member.user.username }}</a></td>
+                        <td>{{ member.get_role_display }}</td>
+                        <td>{{ member.joined_at|date:'M d, Y' }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="tab-pane fade" id="reviews">
+        <h4>Reviews</h4>
+        {% if user.is_authenticated and member_status %}
+            <form method="post" action="{% url 'add_review' club.slug %}">{% csrf_token %}
+                <div class="row g-3 align-items-end mb-3">
+                    <div class="col-md-2">
+                        <label class="form-label">Rating</label>
+                        <select class="form-select" name="rating" required>
+                            {% for value in '12345' %}
+                                <option value="{{ value }}">{{ value }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-8">
+                        <textarea name="comment" class="form-control" rows="3" placeholder="Share your review"></textarea>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary">Add Review</button>
+                    </div>
+                </div>
+            </form>
+        {% endif %}
+        {% for review in reviews %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <div>
+                            <strong>{{ review.user.username }}</strong>
+                            <div>
+                                {% for char in '12345' %}
+                                    {% if forloop.counter <= review.rating %}
+                                        <span class="text-warning">★</span>
+                                    {% else %}
+                                        <span class="text-muted">☆</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <span class="text-muted">{{ review.created_at|date:'M d, Y' }}</span>
+                    </div>
+                    <p>{{ review.comment }}</p>
+                </div>
+            </div>
+        {% empty %}
+            <p>No reviews yet.</p>
+        {% endfor %}
+    </div>
+</div>
+    {% endwith %}
+{% endwith %}
+{% endblock %}
