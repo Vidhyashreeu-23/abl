@@ -7,9 +7,9 @@
             {% is_member user post.club as member_status %}
             {% is_club_admin user post.club as club_admin %}
         {% endif %}
-        <div class="row">
+        <div class="row g-4">
     <div class="col-md-8">
-        <div class="card mb-4">
+        <div class="card mb-md-4 mb-3">
             {% if post.image %}
                 <img src="{{ post.image.url }}" class="card-img-top" alt="Post image">
             {% endif %}
@@ -27,8 +27,8 @@
                 {% endif %}
             </div>
         </div>
-        <div class="card p-4">
-            <h4>Comments</h4>
+        <div class="card cc-card-flat p-4">
+            <h4 class="h5 mb-3">Comments</h4>
             {% if user.is_authenticated and member_status %}
                 <form method="post" action="{% url 'add_comment' post.pk %}">{% csrf_token %}
                     {{ comment_form.as_p }}

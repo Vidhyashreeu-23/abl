@@ -7,7 +7,7 @@
             {% is_member user club as member_status %}
             {% is_club_admin user club as club_admin %}
         {% endif %}
-        <div class="card mb-4 overflow-hidden">
+        <div class="card cc-club-header mb-4 overflow-hidden">
     {% if club.cover_image %}
         <img src="{{ club.cover_image.url }}" class="card-img-top" alt="{{ club.name }} cover">
     {% endif %}
