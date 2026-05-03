@@ -1,9 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="card">
-    <div class="card-body">
-        <h2>Members of {{ club.name }}</h2>
-        <table class="table mt-3">
+<div class="cc-page-header mb-3">
+    <h1 class="h2 mb-1">Members of {{ club.name }}</h1>
+    <p class="text-secondary small mb-0">Everyone in this club and when they joined.</p>
+</div>
+<div class="card cc-card-flat">
+    <div class="card-body p-4">
+        <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
             <thead>
                 <tr>
                     <th>Avatar</th>
@@ -29,6 +33,7 @@
                 {% endfor %}
             </tbody>
         </table>
+        </div>
     </div>
 </div>
 {% endblock %}

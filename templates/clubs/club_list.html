@@ -1,11 +1,14 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Browse Clubs</h1>
-    <a class="btn btn-primary" href="{% url 'create_club' %}">Create Club</a>
+<div class="cc-page-header d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-2">
+    <div>
+        <h1 class="h2 mb-1">Browse Clubs</h1>
+        <p class="text-secondary small mb-0">Search and filter by category to find your people.</p>
+    </div>
+    <a class="btn btn-primary flex-shrink-0" href="{% url 'create_club' %}">Create Club</a>
 </div>
-<form method="get" class="row gy-2 gx-3 align-items-center mb-4">
+<form method="get" class="cc-filter-panel row gy-3 gx-3 align-items-end">
     <div class="col-sm-4">
         <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Search clubs">
     </div>
@@ -58,10 +61,10 @@
             </div>
         </div>
     {% empty %}
-        <p>No clubs found.</p>
+        <div class="col-12"><p class="cc-empty mb-0">No clubs found.</p></div>
     {% endfor %}
 </div>
-<nav class="mt-4">
+<nav class="mt-4" aria-label="Club list pagination">
     <ul class="pagination">
         {% if clubs.has_previous %}
             <li class="page-item"><a class="page-link" href="?page={{ clubs.previous_page_number }}&q={{ q }}&category={{ category_slug }}">Previous</a></li>

@@ -1,8 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>{{ club.name }} Posts</h1>
-<div class="mb-3">
-    <a class="btn btn-primary" href="{% url 'create_post' club.slug %}">Create Post</a>
+<div class="cc-page-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-3">
+    <div>
+        <h1 class="h2 mb-1">{{ club.name }} · Posts</h1>
+        <p class="text-secondary small mb-0">Updates and announcements from this club.</p>
+    </div>
+    <a class="btn btn-primary flex-shrink-0" href="{% url 'create_post' club.slug %}">Create Post</a>
 </div>
 <div class="row row-cols-1 g-4">
     {% for post in posts %}
@@ -16,10 +19,10 @@
             </div>
         </div>
     {% empty %}
-        <p>No posts yet.</p>
+        <p class="cc-empty">No posts yet.</p>
     {% endfor %}
 </div>
-<nav class="mt-4">
+<nav class="mt-4" aria-label="Posts pagination">
     <ul class="pagination">
         {% if posts.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ posts.previous_page_number }}">Previous</a></li>{% endif %}
         {% for num in posts.paginator.page_range %}

@@ -1,7 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>My Registered Events</h1>
-<div class="row row-cols-1 row-cols-md-2 g-4 mt-3">
+<div class="cc-page-header mb-3">
+    <h1 class="h2 mb-1">My Registered Events</h1>
+    <p class="text-secondary small mb-0">Events you have signed up for.</p>
+</div>
+<div class="row row-cols-1 row-cols-md-2 g-4">
     {% for registration in registrations %}
         <div class="col">
             <div class="card h-100">
@@ -13,7 +16,7 @@
             </div>
         </div>
     {% empty %}
-        <p>You have no event registrations yet.</p>
+        <div class="col-12"><p class="cc-empty mb-0">You have no event registrations yet.</p></div>
     {% endfor %}
 </div>
 {% endblock %}
